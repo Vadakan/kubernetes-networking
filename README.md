@@ -283,5 +283,21 @@ inside the group mentioned the inline policy
 
 ![image](https://user-images.githubusercontent.com/80065996/148536478-a0f9675d-53f5-425a-991c-9ff84b58cd2b.png)
 
+![image](https://user-images.githubusercontent.com/80065996/148537808-ffd52d34-c048-4efb-ada2-eb777e70d127.png)
 
+![image](https://user-images.githubusercontent.com/80065996/148537983-7e833ed8-8959-40a4-8a4f-1a23d3373332.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148538073-b826222f-c7d6-4b82-b848-414aa6acf1cc.png)
+
+**We have to follow minimum IAM policies to be secure:**
+
+https://eksctl.io/usage/minimum-iam-policies/
+
+![image](https://user-images.githubusercontent.com/80065996/148538886-ec7b5559-f7ec-41dd-8d4e-0fd854f2fd10.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148538920-c40b8213-bf22-41a7-9e9f-217a75535d79.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148538958-0fde0bee-3804-4516-b615-a2c005f2e564.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148539241-43adaa32-319b-463b-9b2e-69b0bb69acb5.png)
 
