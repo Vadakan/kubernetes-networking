@@ -121,3 +121,8 @@ Just temporarily we will lose the control over the worker nodes.(just temporaril
 
 ![image](https://user-images.githubusercontent.com/80065996/148528079-af875c36-7c4a-42b6-b6f5-44caf47d1a27.png)
 
+**AWS fargate:
+
+**we can run kubernetes cluster without Ec2 instances(server) -- Severless**
+
+![image](https://user-images.githubusercontent.com/80065996/148528562-3afb7068-0e0a-49a8-9540-2bfdb3481d0f.png)
