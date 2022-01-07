@@ -123,6 +123,165 @@ Just temporarily we will lose the control over the worker nodes.(just temporaril
 
 **AWS fargate:
 
-**we can run kubernetes cluster without Ec2 instances(server) -- Severless**
+**we can run kubernetes cluster without Ec2 instances(server) -- Severless** EKS can very well integrates with this. This is one of the
+advantage of EKS
 
 ![image](https://user-images.githubusercontent.com/80065996/148528562-3afb7068-0e0a-49a8-9540-2bfdb3481d0f.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148530485-61294590-6085-4085-a81f-be0c500b853c.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148530970-4914e6bf-427d-4b5b-91a4-1c88480f9ae5.png)
+
+**EKS kubernetes Cluster creations:**
+
+We are not going to use User interface for creating the kubernetes cluster
+We are going to use Command line tool EKSCTL. because User interface is not that friendly
+
+EKSCTL github account : https://github.com/weaveworks/eksctl
+
+We have to create Separate EC2 instance for only issuing commands for EKSCTL in AWS account
+choose amazon linux 2
+
+![image](https://user-images.githubusercontent.com/80065996/148533068-eddd6fee-a505-496f-9dfb-069a2fa2ee03.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148533135-1988b7c3-a3f8-41e6-a030-2d397ca01fec.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148533205-c9838ce2-9225-4198-8a47-eacba7951d4d.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148533291-a78d818f-6c83-4c30-bfb0-d924faabd8b2.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148533504-937dddff-ea1d-4980-a73a-c12f5375cf9e.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148534127-0bcb9acc-c685-4b59-9333-a5e2046e93e7.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148534283-195ad222-807a-4e0e-b6c8-8b0b533419f0.png)
+
+Once EC2 instance is ready, issue below commands one by one to install EKSCTL command line tool:
+
+WARNING - you MUST delete your cluster when finished.
+-----------------------------------------------------
+
+eksctl delete cluster fleetman
+
+
+1: Install eksctl
+------------------
+
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+
+sudo mv /tmp/eksctl /usr/local/bin
+
+2: Update AWS CLI to Version 2
+------------------------------
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+Now log out of your shell and back in again.
+
+3: Set up a Group
+-----------------
+
+Set up a group with the Permissions of:
+
+AmazonEC2FullAccess
+IAMFullAccess
+AWSCloudFormationFullAccess
+
+You also need to create an inline policy, using the following:
+--------------------------------------------------------------
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "eks:*",
+      "Resource": "*"
+    },
+    {
+      "Action": [
+        "ssm:GetParameter",
+        "ssm:GetParameters"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    }
+  ]
+}
+
+
+4: Add a user to the group
+--------------------------
+
+Use the console to add a user to your new group, and then use "aws configure" to input the credentials
+
+5: Install kubectl
+------------------
+
+Warning: check the current default kubernetes version supplied with EKS and install a matching version of kubectl
+
+export RELEASE=<enter default eks version number here. Eg 1.17.0>
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v$RELEASE/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+Check the version with "kubectl version --client"
+
+
+6: Start your cluster!
+----------------------
+
+eksctl create cluster --name fleetman --nodes-min=3
+
+**commands execution step by step screenshots:**
+
+![image](https://user-images.githubusercontent.com/80065996/148534955-c07dd562-454f-4781-91b7-9db608b26617.png)
+![image](https://user-images.githubusercontent.com/80065996/148534975-c3ff6e2a-0e53-44c0-9fac-bcf56c077fbe.png)
+![image](https://user-images.githubusercontent.com/80065996/148534998-daacf6d0-5579-47f8-937f-37b2773f778f.png)
+
+**Every Ec2 instances we are creating will have by default AWS CLI tool installed in it**
+**with command starts with "AWS", we can access almost all services in AWS via command line**
+![image](https://user-images.githubusercontent.com/80065996/148535125-8decfe21-7f96-4634-a09c-ba31e1beb751.png)
+![image](https://user-images.githubusercontent.com/80065996/148535296-83757650-1a13-4924-8453-c1a943f4db53.png)
+
+**Update AWS CLI to version 2:**
+2: Update AWS CLI to Version 2
+------------------------------
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+Now log out of your shell and back in again.
+
+![image](https://user-images.githubusercontent.com/80065996/148535506-ec6ab523-92d1-4417-9dbe-ed40b3ace63a.png)
+
+Exit and come back
+
+![image](https://user-images.githubusercontent.com/80065996/148535575-a598fa2c-b9b8-4fb1-8456-7685a992df05.png)
+
+Now you can see AWS CLI version2
+
+![image](https://user-images.githubusercontent.com/80065996/148535616-0b163344-7f6f-43d3-a1db-ecc863c57a86.png)
+
+**Configure AWS credentials:**
+![image](https://user-images.githubusercontent.com/80065996/148535802-1dac5027-fdd7-40ee-a5db-21ef203492e9.png)
+
+**You have to set up IAM User:**
+1) Create a group in IAM service and then create a user and allocate the user under the group to access the Ec2 services via AWS CLI
+2) Group defines permissions - what are the services you can access with your Role.
+
+Create a group and assign below policy
+![image](https://user-images.githubusercontent.com/80065996/148536193-a03d9a98-f2c9-43de-9ae5-5188b71a76d0.png)
+![image](https://user-images.githubusercontent.com/80065996/148536319-9b184710-5c6e-4195-a5bd-9171cf6e93bb.png)
+![image](https://user-images.githubusercontent.com/80065996/148536382-e7f27a7d-8765-449a-8a5d-972728fa92d9.png)
+![image](https://user-images.githubusercontent.com/80065996/148536404-2c9ab9ec-6423-4b3b-b999-a8dbd5205db1.png)
+
+inside the group mentioned the inline policy
+
+![image](https://user-images.githubusercontent.com/80065996/148536478-a0f9675d-53f5-425a-991c-9ff84b58cd2b.png)
+
+
+
