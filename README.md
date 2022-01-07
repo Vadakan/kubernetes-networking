@@ -36,8 +36,20 @@ We have to mention the name in above deployment correctly.
 Commands to get Persistent Volume and Persistent volume claim:
 ==============================================================
 
-**kubectl get pv   -- to see persistent volume
-kubectl get pvc  -- to see persistent volume claim**
+**kubectl get pv  
+to see persistent volume
+kubectl get pvc  
+to see persistent volume claim**
 
-we use above command because we cannot see persistent volume and persistent volume claims using **"Kubectl get all"** command
+we use above command because we cannot see persistent volume and persistent volume claims using 
+**"Kubectl get all"** command
+
+below image stats that.
+
+We can confirm whether the persistent volume is bound by verifying the **"status Bound" field below**
+
+![image](https://user-images.githubusercontent.com/80065996/148521272-888dcff3-58dc-42a0-baea-f404a16597f7.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148521162-271dfbc9-e101-4e45-b457-6c0a00f40572.png)
+
 
