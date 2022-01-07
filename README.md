@@ -32,3 +32,12 @@ At run time , "first part(Persistent Volume claim)" will look for 20GB size Seco
 ![image](https://user-images.githubusercontent.com/80065996/148518444-3f145241-d9e0-4c98-b532-b95e32bd7691.png)
 
 We have to mention the name in above deployment correctly. 
+
+Commands to get Persistent Volume and Persistent volume claim:
+==============================================================
+
+**kubectl get pv   -- to see persistent volume
+kubectl get pvc  -- to see persistent volume claim**
+
+we use above command because we cannot see persistent volume and persistent volume claims using **"Kubectl get all"** command
+
