@@ -82,4 +82,42 @@ like below API gatway in two nodes.
 
 **When node connected to EBS failed and restarted again, it will connect back to EBS again automatically and works perfectly fine**
 
+**Proper set up of cluster like below we are going to set up:**
+
+![image](https://user-images.githubusercontent.com/80065996/148525468-23eba117-ccdd-461f-a7df-c6150f2a414d.png)
+
+**KOPS vs EKS:
+**
+
+KOPS -- Given by kubernetes
+EKS --- Provided by amazon
+
+In KOPS -- you can see master running on one of the nodes (EC2 machine). 
+But in EKS --- you cannot even see the Master running. Master node will be managed by amazon itself.
+Also in KOPS, you will get single master by defauly but we can configure another master as well on our own.
+Also in KOPS, sometimes Kubernetes cluster monitoring system, will give alerts if master is failing. so we have to manually fix it
+
+**What happens if we terminate the master:?**
+**If master node is terminated, there will another master immedicately started by default. also, losing a master will not affect the worker nodes.
+Just temporarily we will lose the control over the worker nodes.(just temporarily)**
+
+![image](https://user-images.githubusercontent.com/80065996/148526577-d4618f30-79e8-4418-a5a3-d31eb2810088.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148526632-2d66c69d-e71f-4519-b6b5-79201efe14ee.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148526697-0220e6eb-7a20-44bb-9513-1e66ffbb299b.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148526773-d2479535-8986-41e9-a4c5-040e7ce3d40f.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148526888-611ff529-2e62-4dd9-93c4-b6d726178a47.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148527189-4eab0cbb-0587-49a4-88c3-302a898bec69.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148527844-e3a4b42d-b691-49a1-bc56-df09158b4e9e.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148527907-1bdf97be-5c81-441d-a2aa-ea486e55b07b.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148527940-00fad9e4-9216-4bc4-a4bf-224dece8f556.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148528079-af875c36-7c4a-42b6-b6f5-44caf47d1a27.png)
 
