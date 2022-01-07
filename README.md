@@ -67,3 +67,19 @@ We can confirm whether the persistent volume is bound by verifying the **"status
 **AWS Kubernetes Deployment:
 ![image](https://user-images.githubusercontent.com/80065996/148523833-b5834d59-245a-44ae-9d02-15be9f0c15ec.png)
 
+![image](https://user-images.githubusercontent.com/80065996/148524257-f4385a5a-a66a-478e-9339-1f133013a2b4.png)
+
+**What happend if a node fails which is hosting the "API Gateway" ?. we need to architect our cluster for this scenario as well to 
+make API gateway replicated in other active nodes. so we can write Yaml files in such a way that API gateway can run simultaneously 
+at two nodes rather than only 1 node which if fails creates an issue.**
+
+like below API gatway in two nodes.
+![image](https://user-images.githubusercontent.com/80065996/148524717-862ae5fe-b4f4-4998-a8ff-07f7d92ebb60.png)
+
+**Persistent storage in EBS (Elastic block store)**
+
+![image](https://user-images.githubusercontent.com/80065996/148524805-0849ee27-8bb1-4278-98e0-abed5b6fb8fb.png)
+
+**When node connected to EBS failed and restarted again, it will connect back to EBS again automatically and works perfectly fine**
+
+
