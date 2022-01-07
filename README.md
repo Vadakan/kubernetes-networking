@@ -301,3 +301,4 @@ https://eksctl.io/usage/minimum-iam-policies/
 
 ![image](https://user-images.githubusercontent.com/80065996/148539241-43adaa32-319b-463b-9b2e-69b0bb69acb5.png)
 
+![image](https://user-images.githubusercontent.com/80065996/148539510-7839e620-8aa9-4114-846a-ad7b32394f46.png)
