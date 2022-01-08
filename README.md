@@ -317,3 +317,15 @@ so we need to have distributed logging mechanism(software) to capture the logs i
 We are going to use fluentd. fluentd is just going to only collect the logs from pods. it will store the logs. It will just collect the data. Thats all its work is done
 for storing it will send the logs to another component **called "Elastic search"** **which in turns use database to store the logs and we can query it**.
 
+
+![image](https://user-images.githubusercontent.com/80065996/148655976-bcbe17e5-ce7d-4419-88dc-291b0ad951be.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148656015-ed6d1973-0ba3-45ca-9ff9-a9862ad2af4c.png)
+
+**ELK - Logstash(or Fluentd) -- Elastic search -- Kibana**
+
+Kibana will give frontend which is showing user friendly way of logs 
+
+![image](https://user-images.githubusercontent.com/80065996/148656205-b4482eba-8497-48c2-b10e-6b6db78abd7f.png)
+
