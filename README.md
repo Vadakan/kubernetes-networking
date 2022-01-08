@@ -302,3 +302,18 @@ https://eksctl.io/usage/minimum-iam-policies/
 ![image](https://user-images.githubusercontent.com/80065996/148539241-43adaa32-319b-463b-9b2e-69b0bb69acb5.png)
 
 ![image](https://user-images.githubusercontent.com/80065996/148539510-7839e620-8aa9-4114-846a-ad7b32394f46.png)
+
+
+
+**Distributed logging:**
+
+Every container inside the pod inside the node will produce logs for sure. Even in case of failure applications running inside the pod will produce logs.
+so we need to have distributed logging mechanism(software) to capture the logs in case of failure. 
+
+**Logstash or fluentd** are most commonly used for capturing the logs from containers.
+
+![image](https://user-images.githubusercontent.com/80065996/148655500-f91a2729-3610-46e6-a603-ab6cfb3d7dd8.png)
+
+We are going to use fluentd. fluentd is just going to only collect the logs from pods. it will store the logs. It will just collect the data. Thats all its work is done
+for storing it will send the logs to another component **called "Elastic search"** **which in turns use database to store the logs and we can query it**.
+
