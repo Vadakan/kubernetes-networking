@@ -344,3 +344,14 @@ created in every node of the cluster.
 
 **Configmap - this is similar to deployment file, it will create key,valye pair that every pod can access in the cluster
 **
+
+**Monitoring the kubernetes cluster using promotheus and grafana:**
+
+**in case of any node faiure or CPU crunch or any other problem which lead to node failure, We need to monitor and get alert.**
+**every cloud provider will give such a alarm service(ex: cloud watch in aws), but we will get only limited analysis by the service and **
+**if we want to move the kuberneted cluster from one cloud service provider to another service provider, we need to study their monitoring system,**
+**instead we can use common monitoring system. Promotheus is one of that**
+
+**Promotheus is monitoring tool. it works similar to ELK stack. Frontend for prometheus in Grafana (provided by grafana labs)**
+
+
