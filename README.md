@@ -329,3 +329,18 @@ Kibana will give frontend which is showing user friendly way of logs
 
 ![image](https://user-images.githubusercontent.com/80065996/148656205-b4482eba-8497-48c2-b10e-6b6db78abd7f.png)
 
+**Deamon set: This is same as replica set in kubernetes. Difference is if we mention the deamon set, we need not mention the replica set, pod will be **
+created in every node of the cluster.
+
+![image](https://user-images.githubusercontent.com/80065996/148676697-20dac312-d987-4249-a74c-91a876f18a3a.png)
+
+**Statefulset := this is same as replica set, we mention number of replicas. Difference is pod will be generated with proper names.in replica set pods will**
+**be generated with random auto generated names.**
+
+![image](https://user-images.githubusercontent.com/80065996/148676719-8c97b7fd-9500-4bf9-9297-2a6361982847.png)
+
+**ELK (Fluentd,Elastic search and Kibana -- kubernetes github page itself will provide the files to configure this via container. Udemy course download section**
+**has combined version of this architecutre. you can use it.)**
+
+**Configmap - this is similar to deployment file, it will create key,valye pair that every pod can access in the cluster
+**
