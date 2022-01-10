@@ -386,4 +386,30 @@ Above command shows how much RAM left in the node.
 
 ![image](https://user-images.githubusercontent.com/80065996/148811209-6af39bfb-67ce-48e7-aa95-c8286cee1bcc.png)
 
+After checking the free memory we can mention the space needed for pods we are creating.
+
+
+![image](https://user-images.githubusercontent.com/80065996/148812221-98901e6b-26bf-4c4d-8145-d0223e025c0b.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148812387-3280b908-e50c-4896-8b68-3f91cf0cc63f.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148812676-2f87f90f-9ffd-4989-b998-544f93e80a40.png)
+
+For every field changed in our deployment and if we do 'kubectl apply -f" (re-deploy), new replica set will be created and old replicas will be 
+reduced to zero pods.
+
+
+![image](https://user-images.githubusercontent.com/80065996/148812897-001fd370-dc2d-46f0-8b8e-2772dd7e1126.png)
+
+due to space issue, it is showing still pending.
+
+**kubectl describe node nodename**
+
+above command provides below statistics about memory usage of all the pods running inside the node.
+
+![image](https://user-images.githubusercontent.com/80065996/148815965-69110651-af16-429e-98b0-69f94fe18217.png)
+
+
 
