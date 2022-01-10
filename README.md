@@ -355,3 +355,35 @@ created in every node of the cluster.
 **Promotheus is monitoring tool. it works similar to ELK stack. Frontend for prometheus in Grafana (provided by grafana labs)**
 
 
+**Advanced kubernetes:**
+
+Memory Requests: We can mention the pod definition, like how much space the pod would take to run comfortably.
+(specifically we have to mention the RAM for the POD. if a RAM for the POD is more than RAM for the node(EC2 instace) in which it is going to run,
+then it will throw the error
+
+**Good scenario:**
+
+![image](https://user-images.githubusercontent.com/80065996/148797817-72727ca2-3e8d-43a1-9d15-d0c531671357.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148798434-b76d22a6-fd93-4637-ba55-5aaaeec0e1fc.png)
+
+**Tyring to deploy the fourth pod which exceeds the RAM:**
+
+![image](https://user-images.githubusercontent.com/80065996/148798629-996a5775-6399-4500-8dcd-25ff64022dd2.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148798721-b9bb1095-eac2-40f3-a28d-7cce2f1df83e.png)
+
+**How to see how may space and RAM left for a node (EC2 instance):**
+
+
+![image](https://user-images.githubusercontent.com/80065996/148809825-d17773e6-0092-40a2-8630-6925ad75cc7b.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148809908-5ab1bcb1-2727-42c8-9b7d-c4eee7c290fb.png)
+
+Above command shows how much RAM left in the node.
+
+![image](https://user-images.githubusercontent.com/80065996/148811209-6af39bfb-67ce-48e7-aa95-c8286cee1bcc.png)
+
+
