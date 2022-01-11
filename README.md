@@ -595,3 +595,28 @@ its an addon
 ![image](https://user-images.githubusercontent.com/80065996/148940497-2861369a-4b54-4285-b461-3eed51515146.png)
 
 i will open browser and will display the metrics in the dashboard format. if you press ctrl+c dashboard will go off
+
+**Setting reasonable Resource size:**
+
+metrics-server showing CPU and Memory below based on usage, we can consider this and provide resource based on this
+
+![image](https://user-images.githubusercontent.com/80065996/148967524-400fa35b-d778-4044-9109-56c654cfbd28.png)
+
+
+
+**Horizontal pod auto scaling:**
+
+
+![image](https://user-images.githubusercontent.com/80065996/148968324-45544ed9-5cfe-49a0-b58d-e7e30d1d2abc.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148970484-c93ccd0c-6432-4f26-ad06-e3c8d73ce322.png)
+
+
+We cannot scale all the services present in microservice architecture.
+
+1) Suppose if a service reads a file and passing values to another service, we cannot replicate this service, because it will send
+duplicate values to the destination and it will give wrong results
+
+2) if a service reads data from database and do some calculations and returing the result, we can do replication for that service.  
+    so that we can avoid CPU intensive calculation.
+    
