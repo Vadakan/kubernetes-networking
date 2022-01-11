@@ -594,4 +594,4 @@ its an addon
 
 ![image](https://user-images.githubusercontent.com/80065996/148940497-2861369a-4b54-4285-b461-3eed51515146.png)
 
-i will open browser and will display the metrics
+i will open browser and will display the metrics in the dashboard format. if you press ctrl+c dashboard will go off
