@@ -507,4 +507,91 @@ redeploying it
 
 ![image](https://user-images.githubusercontent.com/80065996/148923497-e65f47d8-85b3-48d7-a97b-b3141343df81.png)
 
+**When you have microservice running in production and it has memory leak issue once in 6 months. memory leaks are 
+difficult to trace and if no much developers available, so we can use this memory limit property to set the limit and if once
+the pod runing that microservice detects, memory is exceeded, it will terminate the container inside of it and start a new one. 
+so we will not worry for next 6 months**
 
+**Kubernets metrics profiling:**
+
+**(used to identify how much space your pod going to need. how to get resources limit for CPU and memory to specify in the YAML file)**
+
+**Two commands used to identify the CPU and memory maximum used by either POD or NODE. But we need to install metrics profiling server to do that
+or else below command will fail**
+
+![image](https://user-images.githubusercontent.com/80065996/148927992-abd1356e-3c82-499d-af89-9323ea850810.png)
+
+**Metrics profiling server is another pod which we are going to run**
+
+**Metrics profiling is the addon in the minikube **
+
+**to check the addons use below command**
+
+![image](https://user-images.githubusercontent.com/80065996/148929354-b19b8e2a-ad1b-494e-85b9-607fc7761f77.png)
+
+**We are going to enable below addon:**
+
+![image](https://user-images.githubusercontent.com/80065996/148930053-62a864fa-c533-477b-87ae-cfc68a2e8d5f.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148930864-8dc1a84c-8b77-41ec-a876-04880f0e9c3a.png)
+
+**two pods of Active MQ is running:**
+
+![image](https://user-images.githubusercontent.com/80065996/148932129-3645a07d-24e9-4173-8aad-9de345110fa2.png)
+
+we will do metrics profiling now
+
+![image](https://user-images.githubusercontent.com/80065996/148932485-534afe4a-1f66-4872-a6bc-b5d419a10797.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148932525-d7dbb158-2b42-4331-ab2d-f65c7446b335.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148933360-d21a1615-1741-47c5-a239-13b477ebe10a.png)
+
+Metrics profling always takes time to get the metrics,
+
+Inside kube-system namespace you can see the metrics service and deployment available
+
+![image](https://user-images.githubusercontent.com/80065996/148933588-937b5968-cd96-4649-a400-b35452d51863.png)
+
+
+it will show maximum CPU and RAM used by each pod like below so that we can mention the amount in out Resource request in YAML
+
+![image](https://user-images.githubusercontent.com/80065996/148934208-8f0f1372-26a7-460b-9a45-eb59b86726cd.png)
+
+
+**What will happen if a node has sufficient memory. the pod we are requesting is going to occupy 300Mi (300 MB) of maximum size as per 
+metrics server. But in YAML file we are mention resource request (RAM request for the same POD with 4Mi (4Mb) size. Eventhough we mention 
+very little memory and try to run a pod which consumes more memory, as long as our node is having enough memory kubernetes will allow running the pod**
+
+**mentioning 1MB which is very less in below YAML **
+
+![image](https://user-images.githubusercontent.com/80065996/148935867-2742e0e0-2723-4ad6-9376-afc6957d8cf9.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148936669-32ce349f-1da9-406e-8fd3-27caf1300055.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148936726-e805240c-4114-4d63-877f-58bc91067aa2.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148936648-d43130a9-7439-4cbd-ab4b-cbac534e9b99.png)
+
+**Kubernetes didnt stop the pod from running it happily allocated the space for running**
+
+![image](https://user-images.githubusercontent.com/80065996/148936823-ba83e8ba-b3c8-4dd0-9014-b25fc3724d42.png)
+
+
+**Seeing metrics on the dashboard:**
+
+Kubernetes has in built dashboard to see the metrics. It will not be as good as promotheus but for small clusters we can use this
+its an addon
+
+![image](https://user-images.githubusercontent.com/80065996/148939756-aa454e4c-5c87-4216-94c8-8a44f21c1f20.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148939795-883883a0-f55f-43f0-8498-1c9988bbed87.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/148940497-2861369a-4b54-4285-b461-3eed51515146.png)
+
+i will open browser and will display the metrics
