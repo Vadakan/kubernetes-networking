@@ -412,4 +412,99 @@ above command provides below statistics about memory usage of all the pods runni
 ![image](https://user-images.githubusercontent.com/80065996/148815965-69110651-af16-429e-98b0-69f94fe18217.png)
 
 
+Till now we saw Memory Requests.
+**Now its time for CPU Requests:**
+
+We have 2 CPU's available in our node (2 core cpu, we can request 1 CPU for a pod or 2 CPU for a pod depends on the size of the pod
+but if we ask more CPU than its available curretly in the node, then it will throw an error)
+
+Ex: I have 2 core CPU, requesting 100m (100 mill CPU, 1000milli CPU equal to 1 CPU)
+
+![image](https://user-images.githubusercontent.com/80065996/148913674-39659af3-e21c-4cb3-be88-74c8132e28ff.png)
+
+Since 100m (100 milli CPU) can be allocated when we have 2 core CPU, there is no issue, it will run smoothly
+
+![image](https://user-images.githubusercontent.com/80065996/148915061-b8dc8a60-eb8b-4b57-8bb6-e956d2874b0a.png)
+
+Now deliberately giving more CPU,
+
+![image](https://user-images.githubusercontent.com/80065996/148915342-f31cddc2-87be-4677-a827-a53d126a13ed.png)
+
+50% of CPU is requested by this pod
+
+![image](https://user-images.githubusercontent.com/80065996/148915844-b273b0d8-3978-4d4d-89c4-3da551f5d4d6.png)
+
+Now trying to exceed the limit
+
+![image](https://user-images.githubusercontent.com/80065996/148916020-79270b41-33f3-498c-90f8-af46e0208fe6.png)
+
+**Pod wont be successfull as it will be in pending state for long time**
+
+![image](https://user-images.githubusercontent.com/80065996/148916262-7a5b11d1-6191-4ede-bc2b-4172139598d3.png)
+
+**Describing the pod to see more details:**
+
+**Pod failed to schedule due to insufficient memory**
+
+**1000 millicore equal to 1 CPU , 2000 millicore equal to 2 CPU**
+
+![image](https://user-images.githubusercontent.com/80065996/148916441-4f1aae8b-2ec2-48f6-b9c0-c82df22d0d16.png)
+
+**Memory and CPU Limits** **("Limits" is different "Request" is different. We saw "memory and CPU requests" above, now we are going to 
+see "Limits")**
+
+![image](https://user-images.githubusercontent.com/80065996/148918166-84b64608-1926-4c55-95eb-5ba10d6f6ccd.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148918462-8b0fd3b6-1c6f-4307-a638-564f610cb5d4.png)
+
+if CPU limit is exceeded, Container will continue to run but CPU will be 'clamped' (also called as throttling), kubernetes will not allow
+the container to use more CPU than the limit specified by us in the YAML file
+
+**Scenario : Limit of CPU and Memory is same as Limit of CPU and Memory speicifed in YAML file of container going to start**
+
+![image](https://user-images.githubusercontent.com/80065996/148919659-28e95bf1-497f-44ca-b287-0f560f59fb58.png)
+
+**Container started without any issue:**
+
+![image](https://user-images.githubusercontent.com/80065996/148920355-3b7853e1-e213-4fd8-9bcf-da7690abd9b6.png)
+
+Container running smoothly
+
+![image](https://user-images.githubusercontent.com/80065996/148920449-d63edc71-3e4f-4c93-a937-8dc5e66d92ae.png)
+
+
+Memory exceeding scenario : Limit 300Mi requesting 400Mi
+
+![image](https://user-images.githubusercontent.com/80065996/148920710-468c88fe-8501-4a9a-883e-deb833913efc.png)
+
+**Kubectl apply -f command itself throwing error by checking limit and allowed amounts**
+
+![image](https://user-images.githubusercontent.com/80065996/148920813-767c4455-d012-41cd-93e1-76632d5393ee.png)
+
+**Increasing replica count to exceed limits during runtime sceanrio:**
+
+![image](https://user-images.githubusercontent.com/80065996/148921025-80478638-c916-43d1-87c0-164b38717893.png)
+
+But surprisingly its running well. Because this is not memory increasing at runtime scenario. Limit and resource we set is for individual pods 
+and its running perfectly.
+
+![image](https://user-images.githubusercontent.com/80065996/148922275-f9f8ff83-7548-4931-a858-3f8c7c7ee923.png)
+
+**We can mimic that scenario in other way, We can reduce the memory request and limit to 4Mi and redeploy it (kubectl apply), so new replica set
+will be created.Since we mentioned very low memory 4Mi (4 MB), memory will not be enough for the pod and container will restart it considering
+it reaches the limit**
+
+![image](https://user-images.githubusercontent.com/80065996/148922676-6cd1290a-28d2-462c-8fc9-c4fae18d0638.png)
+
+redeploying it
+
+![image](https://user-images.githubusercontent.com/80065996/148922777-cf45e1a4-4565-44be-80fb-b6c5a54c8799.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148922895-dc0e81bd-0f22-4edb-9d8c-562ec28a5f54.png)
+
+**describe it to see the error:**
+![image](https://user-images.githubusercontent.com/80065996/148923380-16301896-a6ae-4ec5-a228-6dacb935d775.png)
+
+![image](https://user-images.githubusercontent.com/80065996/148923497-e65f47d8-85b3-48d7-a97b-b3141343df81.png)
+
 
