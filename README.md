@@ -620,3 +620,26 @@ duplicate values to the destination and it will give wrong results
 2) if a service reads data from database and do some calculations and returing the result, we can do replication for that service.  
     so that we can avoid CPU intensive calculation.
     
+
+# Databases are difficult to replicate to many pods. Some database can provide their own replication system like mongo database which provides their
+# own replication system that we can use to replicate databases.
+
+**Example: ** 
+
+# for the replication we created, loads will be shared by their respective 'services' in round robin fashion(by default, we can change that if we want)
+
+**1) API gateway needs to be highly available, its functionalty is to just pass the routes to microservice in the cluster**
+**2) SQL services cannot be replicated. if SQL permits its own replication then we can do similar to mongo database's own replication system. or else it will give 'split** **memory' issue which give unexpcted results.**
+**3) Service like which reads database or file and pass the data to particulat service (only doing that work similar to position simulator passing **
+   random data continously to Active Mq service), should not get replicated. Because it will pass duplicate values and will give unexpected results.
+**4) Services which reads database and do some calcualtions then those kind of service can be replicated. **
+**5) MQ's can be replicated or not --> needs some discssions**
+
+
+# Topic : Horizontal POD auto scaling 
+
+**Horizontal scaling : create more nodes and make the cluster powerful**
+**Vertical scaling : Making the nodes more powerful **
+
+
+
