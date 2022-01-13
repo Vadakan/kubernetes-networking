@@ -752,3 +752,39 @@ copy the YAML generated and paste it notepad
 **step 15: Result:**
 
 ![image](https://user-images.githubusercontent.com/80065996/149323125-3b386081-d626-4181-9ce9-58be53a44263.png)
+
+
+**step 16 : Scaling down**
+
+changing the perecentage target to 90 % (by changing YAML file for auto scaling rules.) so only if 90% out of 50m (50 milli core CPU) is used then scale up should 
+heppen and if its less than that scale down should happen
+
+**curent CPU usage :**
+
+**26m (26 millicore) is used till now**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149325463-b806385c-e76a-4d73-a06d-760c52bef2e9.png)
+
+now changing the rule.YAMl file so that my cluster will sacale down
+
+![image](https://user-images.githubusercontent.com/80065996/149325583-34b5b22a-809f-447a-804d-d5923a547bcf.png)
+
+
+
+**mentioned 90 percent, so once i apply it has to scale down since i mentioned minimum number of pods as 1**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149325722-567f416d-d370-4c78-9727-53c15c236d07.png)
+
+
+**successfully scaled down:**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149326458-cc3eabbd-0ecf-400d-8e69-59e54decf146.png)
+
+
+**could see only 1 pod**
+
+![image](https://user-images.githubusercontent.com/80065996/149326823-7107b3ff-9309-4350-a9f9-09d5a9ac5abc.png)
+
