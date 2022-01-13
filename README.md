@@ -788,3 +788,110 @@ now changing the rule.YAMl file so that my cluster will sacale down
 
 ![image](https://user-images.githubusercontent.com/80065996/149326823-7107b3ff-9309-4350-a9f9-09d5a9ac5abc.png)
 
+
+# Readiness and Liveness probes:
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149350103-c1af1ad6-5485-4229-aa22-59a72ea9dcef.png)
+
+
+
+When auto scaling happens if new pods are created, it will always take time for the container running inside the auto scaled pod to recieve user 
+requests. so 1/3 rd of the users will always face issues. we can avoid this by using readiness and Liveness probes
+
+![image](https://user-images.githubusercontent.com/80065996/149358086-59006895-c0c5-46da-85af-f47318e32ad0.png)
+
+what it does is once the pod is ready to recieve the requests, then kubernetes will consider the pod as active pod and service created for the
+corresponding deployment will pass the request only when pod is ready
+
+port mentioned here is the port in which microservices listening inside the container.
+
+![image](https://user-images.githubusercontent.com/80065996/149358554-94cb3d56-31d2-4110-8323-ef6ab5e9563a.png)
+
+
+**stimulating the readiness probe sceanrio:**
+
+
+we have below 3 files:
+1) Delpoyment
+2) service (nodeport)
+3) auto scaling rules - hpa (horizontal pod auto scaling)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149360540-d5a2e0c5-d7ff-4ff6-a3fd-60ffb8ade6c9.png)
+
+1) Delpoyment:
+
+
+![image](https://user-images.githubusercontent.com/80065996/149360817-e12d0bec-fd5b-453f-b7c5-31cfab2e30b0.png)
+
+
+2) services:
+
+
+![image](https://user-images.githubusercontent.com/80065996/149361005-6503b7fe-9731-4374-afbb-31ceb6c33cb5.png)
+
+3) auto scaling rules - hpa (horizontal pod auto scaling)
+
+![image](https://user-images.githubusercontent.com/80065996/149361174-f4cb4cec-e4b2-4043-bbea-406f71d30c96.png)
+
+After applying kubectl command we have got deployments, replicasets, pods, services, HPA(auto scaling rules) configured as shown below,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149370233-a65ae029-bb5c-4dc9-a1c8-94704d68d434.png)
+
+now we are going to overload this single pod with many requests so that new pod will be created as part of auto replication but pods will be only
+ready after readiness probe and service created will not loadbalance requests untill its ready after readiness probe so that non-ready pod will not 
+get requests and can avoid loading delay for our webapp
+
+**opening a git bash and run a curl command infinite times to overload the pod**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149372208-6963cb46-2942-45ae-a58c-573bd61c32d9.png)
+
+**command to do that below **
+
+![image](https://user-images.githubusercontent.com/80065996/149372758-f6907737-62fd-4c15-8935-27ab53b92086.png)
+
+
+below image shows, increase in hit increased memory usage and CPU usage and new replica is created as part of auto scaling but there is no delay 
+in git bash nor error this is because service will load balance request only if the pod is ready
+
+![image](https://user-images.githubusercontent.com/80065996/149372041-aa2b06b1-65b4-4c9a-984d-41627bbfed22.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149372549-c21144aa-3735-4fcb-977e-28067175e5d6.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149373040-202d7a64-c233-44e6-925a-6e3f073ecf35.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149374402-f3ade940-40ad-4630-b937-1cbf48dc6e8a.png)
+
+
+**removed the "readiness probe here in the deployment"**
+
+![image](https://user-images.githubusercontent.com/80065996/149374931-dc37bf12-4cee-4e40-b6fb-306fac626b50.png)
+
+going to apply it now,
+
+![image](https://user-images.githubusercontent.com/80065996/149375056-4fec9ecd-b8a4-4caf-8ba2-18571f60058b.png)
+
+
+now going to bombard the server with requests:
+
+![image](https://user-images.githubusercontent.com/80065996/149375261-80fce4ee-66ee-445b-90ea-c0a4a903cb94.png)
+
+
+now there is a delay in getting repsonse due to absence of readiness probe
+
+![image](https://user-images.githubusercontent.com/80065996/149375520-160a1720-bb77-46b7-a9ac-44c41b9967d8.png)
+
+
+
+
+
+
+
+
