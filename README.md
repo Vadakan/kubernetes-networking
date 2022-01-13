@@ -642,4 +642,113 @@ duplicate values to the destination and it will give wrong results
 **Vertical scaling : Making the nodes more powerful **
 
 
+# When we create a deployment with replica as '1' for a pod with CPU requets as 100m (100 milli core), and we can create HPA(horizontal pod auto scaling)
+# some rule with condition (if cpu exceeds 50 % of usage, then deployment will be updated automaticall with replica as 2 (auto scaled))
 
+
+![image](https://user-images.githubusercontent.com/80065996/149307374-30f85b97-3aff-4fc6-86d0-87d18c307b95.png)
+
+
+if CPU reached 50% usage, you can see below replica updated to 2 (we gave maximum replica of 5 in auto scaling configuration)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149307491-fe4cc4cc-24ed-4bd0-8dac-b357cbe0281d.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149308597-dcd7319d-cd14-4775-a200-77b60df7342b.png)
+
+# auto scaling will not only scale up the pods, but also scale down the pod count in case of under usage.
+
+**Steps to do auto scaling :**
+
+**Step 1:** **Deployment we are going to create**
+
+CPU i have mentioned as 50m (50 millicore). I am going to create rule saying if our pod reached more than 20% of CPU mentioned ( 20% of 50 - around 10 ), then
+auto scale needs to happen. and **maximum number of pod needs to get scaled is 2**
+
+![image](https://user-images.githubusercontent.com/80065996/149314541-5e4b3a34-014d-4d9f-9811-932d5bf641dc.png)
+
+**Step 2 : Deploy the deployment YAML we have created**
+
+kubectl apply -f deplyment.yaml
+
+![image](https://user-images.githubusercontent.com/80065996/149315089-bb2c4200-07f8-4e2c-bfb6-1072cc3f916a.png)
+
+
+**step 3: **Enable the **metrics-server** to see hoe much memory and CPU the pod is using on its maximum
+
+
+![image](https://user-images.githubusercontent.com/80065996/149315264-f833efb9-361e-485a-a847-5c1c1aaed3d9.png)
+
+
+**step 4: now we identify maximum CPU core usage is 14m (14 milli core CPU)**
+  # create auto scaling using kubectl command - option 1 --> this is not ideal way to do this. Always we have to use YAML file to achieve this
+  
+  
+ ![image](https://user-images.githubusercontent.com/80065996/149315681-99e6a027-8c58-4270-b6ee-e4eccdf90123.png)
+
+ 
+# step : 5 you can see auto scaling created from below screeshot:
+
+
+![image](https://user-images.githubusercontent.com/80065996/149315782-5348e7b9-e630-411e-8f4f-812162b51fd9.png)
+
+
+**step: 6 you can see pod is auto scaling because the pod reached more than 20 % of CPU usage**
+
+![image](https://user-images.githubusercontent.com/80065996/149316064-982fc4c4-641a-435a-b6ce-ac3250b7d720.png)
+
+
+**step 7: deployment auto scaled successfully **
+
+![image](https://user-images.githubusercontent.com/80065996/149316212-1d318de1-58ba-4ca4-82fd-02848a6bc30f.png)
+
+**step 8: We can see details of HPA(horizontal pod auto scaling) we created using below kubectl command**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149316704-c8cba7d9-6e0f-4114-a8a1-e933a0f61078.png)
+
+
+**step 9: Now i dont want to do this via command line. because our cluser running should always match the YAML we have in definition.**
+ **we need to generate the YAML file from the kubectl command**
+if we use command, if we delete the cluster, again if cluster is created we neeed to remember this command to create auto scaling
+
+
+![image](https://user-images.githubusercontent.com/80065996/149318769-eb31fe8d-9441-4a88-9e58-40f6e3e6d855.png)
+
+copy the YAML generated and paste it notepad
+
+**step 10: Delete below content (annotations and timestamp) **
+
+![image](https://user-images.githubusercontent.com/80065996/149319214-086563a2-4076-4080-8fcf-5f31156d2a51.png)
+
+
+**step 11: Remove below content as well**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149319395-045633b2-1550-4ec7-b96e-f9fce71476bc.png)
+
+
+**step 12 : After deleting unnecessary content, below final version**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149322303-d7c0e5a6-dafa-4ed0-86ac-326a4f5c390d.png)
+
+
+**step 13: created a file and pasted the version of api here.**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149321047-bbc82263-337c-4f48-a604-2a60686940f5.png)
+
+
+**step 14: apply the YAML now**
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149323048-6534e86a-2495-4cd6-9123-026d94957b4c.png)
+
+
+**step 15: Result:**
+
+![image](https://user-images.githubusercontent.com/80065996/149323125-3b386081-d626-4181-9ce9-58be53a44263.png)
