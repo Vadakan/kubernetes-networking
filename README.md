@@ -1029,6 +1029,96 @@ describe the pod,
 ![image](https://user-images.githubusercontent.com/80065996/149540153-ef41945b-ff7b-4c97-989f-7e570a8e96bd.png)
 
 
+**Now create a pod without memory/cpu requests and limits: this should assign Qos label as "Best effort"**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149545443-c78ef748-d3d2-4f98-92a8-8c0d1a836f60.png)
+
+
+kubectl apply it :
+
+
+![image](https://user-images.githubusercontent.com/80065996/149545778-900b764f-e436-4cb1-acc5-2d901cc9afdb.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149545840-68c6adc8-f3d5-43eb-a5c5-f81f74a5d241.png)
+
+
+describe the pod,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149545967-da417e55-6f8f-4066-aa3e-f62ee2a83486.png)
+
+
+# Demonstration on how this label going to use when node is overloaded:
+# Caution: We should take care of node carefully in kuberneted cluster, if we start losing nodes, then slowly your kubernestes cluster will start to fail
+
+**from below diagram,**
+**if pod1 exceeds 500 Mb, based on limit settings it will automatically evicted, **
+**but the problem really lies with pod2 and pod3, it will not get automatically evicted, thats why this Qos label concept came into picture**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149547318-7dd07801-efcd-4d42-a89d-11a40f08e659.png)
+
+
+**Now scenario := second pod getting more requests and it consumes more memory, so what kubernetes scheduler does is that,** **it will evict the pod
+with label Qos as 'Best effort' because that is a rude pod** **to free up memory. (since this Qos label is the least prior label)**
+**thing to note: Eviction does not mean to remove the pod completely, after few mins, this pod will get created in another node which has enough memory.**
+**This is the algorith in which kubernetes works.**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149549309-86f9e6b8-56a0-4a5c-8cc3-ac67612289d9.png)
+
+
+**pod 2 evicted and it will start in another node somewhere which is having space in the cluster**
+
+![image](https://user-images.githubusercontent.com/80065996/149549655-83033c30-513a-40ae-85e8-b02dec10e537.png)
+
+
+
+**Scenario: 3 suppose if first pod (qos label 'guaranteed' which is nice pod which has memory limit of 500 MB reaches its limit of 500 MB which makes node**
+**overloaded, in this case pod with next least Qos label "Burstable" will be evicted by kuberenetes scheduler)**
+
+**node total memory: 600 MB**
+**Pod1 := 500MB , limit: 500MB - reached 500MB (from 450 MB) Qos - guarnatee**
+**pod2 := no limit, occupied 150MB - Qos - Burstable (this pod will be reomoved by kubernetes scheduler)**
+
+
+ 
+![image](https://user-images.githubusercontent.com/80065996/149562153-2280ce4a-8784-4ab2-8223-1eeb07bd845e.png)
+
+
+
+# Pod priorities:
+
+**pod priorities are mainly intended to use while creating a pod newly.**
+
+**mostly this will not be used in prodcution because it is not quite stable** **but it may get stable in future. so better you know it**
+
+
+# sceanrio: 1 if we set priority as zero (0) in the deployment.yaml file
+
+**Higher the priority number higher the priority to pick it up**
+
+if node is having total memory of 1000Mb, if a pod1 with priority 0 with memory request as 500Mb scheduler will schedule this pod in node
+next, if second pod with priority 10 comes with 600MB (now total memory of node will be exceeded) now scheduler will consider second pod since
+second pod has highest priority (priority number 10), first pod will be terminated and second pod will be scheduled in that node.Terminated pod (pod1) will be
+scheduled newly in different node where it has sufficient memmory
+
+pod1 - priority - 0
+pod2 - priority - 10
+
+![image](https://user-images.githubusercontent.com/80065996/149563425-5bdbd95a-0a7b-44bf-ab8f-7719d3904404.png)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149563586-5e808241-2627-410a-868a-4486b40f043f.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149563711-25d5da92-70e8-4150-826d-582e7d7a0db8.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149563764-ccdbe530-ca52-4a70-a316-cc94ffa315fb.png)
 
 
 
