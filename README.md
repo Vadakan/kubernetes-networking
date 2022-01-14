@@ -890,6 +890,144 @@ now there is a delay in getting repsonse due to absence of readiness probe
 
 
 
+# Quality of service and Eviction:
+
+**Scheduler := job of scheduler is to decide which pod needs to be scheduled in which nod. It will check memory and CPU of the RAM of the node and**
+**decides to schedule the pod to make sure it will not overload the node by creating more pods **
+
+**Fresh node:**
+
+Whole memory is free. so scheduler can schedule new pods here
+
+
+![image](https://user-images.githubusercontent.com/80065996/149525346-6045ea91-4de8-492c-a27b-fdd1e72d5ad6.png)
+
+
+now developer decided to introduce new pods which requests memory RAM as 500 MB as shown below,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149525941-0436c215-bd18-475a-a0fd-c7b4cb6ee65e.png)
+
+
+this pod will fit in so scheduler moved this pod into the node
+
+![image](https://user-images.githubusercontent.com/80065996/149526354-897c9c49-07fe-4f1e-ae91-efc9ee2581af.png)
+
+Current usage,
+
+![image](https://user-images.githubusercontent.com/80065996/149526656-e8492b25-c7cb-4472-a0d1-f208112dcbdd.png)
+
+another pod trying to start up which needs memory request of 300mb, out of 900mb in nide, 500mb is already occupied by first nod, remaining 400 mb is free
+since second pod need  only 300Mb, scheduler will allocate this second pod in same nod itself
+
+
+![image](https://user-images.githubusercontent.com/80065996/149527453-b3d02342-872f-48a2-8aa9-9d5a50d91011.png)
+
+
+second pod allocated in same nod,
+
+![image](https://user-images.githubusercontent.com/80065996/149528816-8b46e8ab-82e0-4fe3-81b5-98395a1ac6c2.png)
+
+
+but we dont know how much memory this pod is really going to use, if 300Mb is requested as part of memory request in YAML, it does not mean that
+it is going to use the entire 300MB of RAM, it may use less oy it may go high as well in runtime
+
+
+![image](https://user-images.githubusercontent.com/80065996/149529219-e2edf0d9-c2ba-454f-a23b-113aa5f99e9c.png)
+
+
+**Now request for scheduling 3rd pod is coming from developer, but the difference is there is no memory request mentioned in the YAML**
+**its plain request. the problem is we are not really sure how much memory this third pod is going to occupy in runtime not even in approx numbers **
+** so its a risk to schedule this in this node as only 100 MB memory left in this node
+
+
+![image](https://user-images.githubusercontent.com/80065996/149529573-9152bebf-184e-4de1-a409-6f79c83e354f.png)
+
+# Scheduler is not intelligent enough to analyse the memory and allocate the pod, it just allocated even if small amount of memory left in the node 
+# as mentioned in the below picture. it just allocated the pod into the node
+
+
+![image](https://user-images.githubusercontent.com/80065996/149530016-787fc601-89de-489b-8e01-ec2563a0d388.png)
+
+
+**Pod1 - we know developer gave all the information (resource limit(pod should not exceed) as well as how much memory pod needs to run smoothly)**
+**pod2 - developer have only how much memory pod needs to run smoothly and not the limit(pod should not exceed)**
+**pod3 - developer didnt give how much memory pod needs to run smoothly and didnt give even the limit (memory pod should not exceed)**
+
+**So as long as pod1 and pod2 runs with less memory than exepcted, third pod will run smoothly but we are not sure when memory will get exceeded and issue comes **
+**up. **
+
+Based on the above conditions given by the developer, we are going to label pods as,
+1) nice pod - pod1 as it has all the info about memory
+2) quite nice pod - pod2 as it does not have memory limit
+3) rude pod - pod3 as it does not have memory info and memory limit info.
+
+**the same thing even kubernetes tries to do --> allocates label to the pods based on the details given but in a slight technical way with technial name (giving labels)**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149531706-c712da03-e240-4511-b516-48b5ec6c25a1.png)
+
+
+# Qos Labels: (Quality of Service) labels - kubernets allocated to pods based on memory request or cpu request details
+
+
+![image](https://user-images.githubusercontent.com/80065996/149533013-230b917e-548e-4cae-9aba-6c84583f6ebe.png)
+
+
+
+if memory request,memory limit. cpu request,cpu limit -  everything is mentioned then kubernetes will give label as **Qos: Guaranteed** label
+
+if memory request or cpu request is given but limit (memory limit or cpu limit) is not given, then kuberneres will give label as **Qos:Burstable** label
+
+if none of the request(cpu or memory) or limit (memory or limit) is given, then kubernetes will give label as **Qos:BestEffort** label
+
+
+# Scheduler will use this label to manage the pods in case anything goes wrong. 
+
+# Demonstration of Qos label set up in kuberenets
+
+1) **We are setting memory requests and CPU requests and not the limits - so we should get label as 'Burstable'**
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149537748-8291b3ea-85e1-4dc2-ac5c-77cea76f2e93.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149537805-6f40a19d-c1ce-4e24-8af8-4dd55cfd0d51.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149537983-2cb124c2-ee00-437d-83ea-3f3a29d14721.png)
+
+
+**'kubectl describe the pod to see the Qos label set up':**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149538213-1c58f2e9-32c8-45b4-ac72-849e601efab7.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149538319-e88954a6-a3fd-407d-9b40-187b801962b5.png)
+
+
+**Setting both memory,cpu requests and limits now and check the Qos label for to set "guaranteed":**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149539202-5183a65f-75f9-43df-8662-09c2356a3323.png)
+
+
+kubectl apply this now,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149540082-65483cac-74ac-4ee1-aadc-280992d50b6d.png)
+
+describe the pod,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149540217-725c42bb-e98e-4e17-9cf8-5f55770fb340.png)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149540153-ef41945b-ff7b-4c97-989f-7e570a8e96bd.png)
+
 
 
 
