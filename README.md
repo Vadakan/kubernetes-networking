@@ -1313,4 +1313,111 @@ Kubectl apply it
 
 
 
+# Option 2: much simpler to use configmap
+
+# We have to make a change in configmap if we need to use in this way,
+
+**old one :**
+
+we cannot use dot operator 
+
+
+![image](https://user-images.githubusercontent.com/80065996/149624158-049de032-d94a-48e9-9b03-7c3ea7256fcf.png)
+
+
+**Changed one:**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149624192-438743dd-1d4b-4ade-a6cf-3554d8482270.png)
+
+
+**Kubectl apply it**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149624282-1e9a782c-4c1b-48c1-a576-fdf30b2b9cfc.png)
+
+
+Remove the changes used in option  1
+
+
+![image](https://user-images.githubusercontent.com/80065996/149623695-f92e7124-c502-4dd9-9f98-040150387fab.png)
+
+
+Just a simple change to accomodate,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149623733-ca9c55c3-989d-4f07-ab8b-e1c5f3f307ce.png)
+
+
+just mention the name:
+
+
+![image](https://user-images.githubusercontent.com/80065996/149623763-8ae3d521-b6d4-4e5a-9202-942285acbc7f.png)
+
+
+
+kubectl apply it,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149623791-7313ded7-fdd4-4822-b067-3995eab9cad8.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149623801-68953307-dd65-48c1-8348-610b92744fa1.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149624436-2a74edcc-a3c1-403e-b27f-170142118135.png)
+
+
+# Mounting configmaps as Volumes
+# We can pass environment variables in another way - in the form file kept in a directory. We have to use the concept of volume mount (persistent storage)
+
+
+Remove the old one as highlighted below:
+
+
+![image](https://user-images.githubusercontent.com/80065996/149625577-cb9b5a30-491d-4a15-a086-3111d7483a49.png)
+
+
+Created Volume inside the image(Container once) and then create a persistent volume which points to local directory in the node like below
+
+
+![image](https://user-images.githubusercontent.com/80065996/149626167-e79fcb11-29ea-4c58-9c39-cc8bea626916.png)
+
+
+kubectl apply it,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149626192-e3102410-79f1-4ae8-bd01-d621d03c405b.png)
+
+
+Next exec into the pod to see volume mount is created inside the pod (container), 
+# this time you will not see environment variables by using echo command because it will be created in the file inside the folder mentioned in volumemounts
+
+
+![image](https://user-images.githubusercontent.com/80065996/149626413-5a6ff168-bc24-46d0-8744-d0b88d5f50a6.png)
+
+
+# basically we used YAML to create configmap in the node separately. Next in the deployment we used the volumeMounts to create a folder inside the 
+# container and copy the configmap into that folder from the configmap we created (used the name in deployment YAML for reference)
+
+# Note : Currently two files created inside the container with names we mentioned in the config.YAML file
+
+
+![image](https://user-images.githubusercontent.com/80065996/149626589-df9ce6c4-9fd4-4129-9a48-27a25fb20228.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149626602-f27c69c9-67f5-4d65-ad0c-6b8f9b003f6f.png)
+
+
+# But we need single file with all the values mentioned in above image, so we need a change in YAML file to achieve that
+
+
+![image](https://user-images.githubusercontent.com/80065996/149626632-fbdca8b3-6ed4-4152-b14f-bd5984f509e4.png)
+
+
+# change the config.YAML file like mentioned below (JSON syntax)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149626728-580e3073-eeca-45b2-bc1f-310221841fe8.png)
+
 
