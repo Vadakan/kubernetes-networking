@@ -1121,5 +1121,196 @@ pod2 - priority - 10
 ![image](https://user-images.githubusercontent.com/80065996/149563764-ccdbe530-ca52-4a70-a316-cc94ffa315fb.png)
 
 
+# Config Maps and Secrets:
+
+Image is something we cannot alter. We can just use it in YAML file in the deployment. if we want to pass values to image for example passing environment variable,
+we need to mention the environment variables like below,
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149614327-b756bd6d-42ed-430a-81b3-d1061f2f2025.png)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149614339-33103f44-b13d-45c7-ae86-2fa1d440dd8f.png)
+
+
+# like this we need to mention in the deployment we are using in YAML file. Its kind of repetitive coding
+# if the image using database, then we need to mention URL value as well in the deployment YAML file everytime, this is also a repetitive coding.
+# we can avoid this by mentioning only once somewhere and can refer it. This is called configm maps and secretes in kubernetes.
+
+**Create a YAML file configmap.YAML**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149614568-674e917e-f7c9-469a-8424-7efa4bad8082.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149614590-bd21833a-dee8-43d4-befc-78235eb2052d.png)
+
+
+# YAML file for config map
+
+![image](https://user-images.githubusercontent.com/80065996/149614696-2a25fb59-ec4c-4a39-a90a-44b26131a9f0.png)
+
+
+Kubectl apply it,
+
+![image](https://user-images.githubusercontent.com/80065996/149614727-bf1178fd-c331-4082-bd8d-ecfe36dc8dc7.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149614779-b2281f2c-ff41-4365-b015-431a03651201.png)
+
+
+# Consuming config maps as environment variables:
+
+# we can do it in 3 ways. 
+ **Way-1 : Kind of hardcoding. This is not proper way of doing it**
+ 
+ # for every value you need you have repeat the block of lines 
+ 
+ ![image](https://user-images.githubusercontent.com/80065996/149615356-4490631c-8ef2-414c-865b-b69c0f849a9b.png)
+
+
+**and for multiple deployment we have to copy and paste the same code. Our objective is to spread across multiple pods. that is met. if suppose now,**
+**any change in database URL or DATABASE password, we have to change only once in config file not in all the places inside the deploymeny.Yaml file**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149615568-e2ad3dff-abb2-4386-85fd-78ef640ff127.png)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149615526-696fc24f-4091-4112-bee3-325a81bd0e35.png)
+
+
+
+kubectl apply it,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149615707-0006fd8c-3982-4da9-8395-86282da7c8bc.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149615739-90145774-d33d-494b-be10-914236d82073.png)
+
+
+now if you are chaning database URL or password change it in config.YAMl so that it will get applied to all the pod spreaded across.
+
+
+![image](https://user-images.githubusercontent.com/80065996/149615912-6076f4ae-d8d4-4be3-8280-7ce8e93c61e3.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149616287-2f44e307-b8ef-4084-bc60-94f515e5dd6d.png)
+
+
+**demonstartion:**
+
+**enter into the pod and check whether environmant variable is set or not**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149616348-21e9263a-6e86-41cf-8dfa-aa28657ac52c.png)
+
+
+# experiment : changing the value of configmap and check inside the pod whether it chanded un RUNTIME
+
+#  step :1 changing the value of configmap database URL value 
+
+**Initial value:**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149616419-5137e479-1dc7-44fd-a45d-3f1cad86ad53.png)
+
+
+**changed Value:**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149616429-47061cea-886c-47a3-bfae-7f9876805167.png)
+
+
+**kubectl apply it,**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149616487-f6719675-ae61-4a17-9232-c053b10ef4a8.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149616505-b3fe6dbb-d1b9-476a-9aec-46f4327eb219.png)
+
+
+# Error --  new config map value not reflcted inside the pod still old configmap value is present
+
+
+![image](https://user-images.githubusercontent.com/80065996/149616562-fe91e041-6aab-4c8c-b856-dce474f04aa2.png)
+
+# Existing pod running will not pickup the configmap changes done during the run time. Only way it can sense the change is we have to kill the pod
+# have to recreate it so that it can pick up the new changes of config map
+
+
+![image](https://user-images.githubusercontent.com/80065996/149616742-efd1d48c-3455-442a-8996-25d691a2aea5.png)
+
+deleted the pod and as per replicaset, new pod is created, we are going to get inside the pod by exec into it
+
+We could see new value is updated now. Only the new pod created will pick up the changes in configmap file
+
+![image](https://user-images.githubusercontent.com/80065996/149616805-0a2bd0b2-3b68-477d-b6c7-a4fb2de24ccc.png)
+
+
+# This problem is resolved by kubernetes recently. this was a bug. Check this and work on it https://github.com/gopaddle-io/configurator
+
+# Temporary solution all the projects are using to avoid this problem:
+# We need to get rid of old configmap yaml file and create a new file and change the reference of that config yaml in all the deployment files 
+# so that new deployment will be created (old replica sets will be terminated and new pods will be created by picking up the configmap changes)
+# note: any change to the deployment file will always create new version (new replica set creation)
+
+
+# demonstration:
+
+**step1 := going to change the config map yaml file for the change in URL value:**
+
+**Current config yaml file:**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149617328-7ac69ec7-805f-4e4a-b499-538d78621931.png)
+
+
+**changed file:**
+
+Changed password so changed the name of configmap as well as highlighted below,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149617368-9559e562-a201-42a8-b29c-e99601fb4dc9.png)
+
+
+**step 2: We have to replace the name of configmap used in delpoyment yaml file by checking manually**
+
+Kubectl apply it 
+
+
+![image](https://user-images.githubusercontent.com/80065996/149617458-8f129c6e-ec1b-4128-a133-924d91fdec50.png)
+
+
+**Repalced the name of configmap in deployment Yaml file**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149617756-475f5201-348c-4e82-8303-576dda61bfad.png)
+
+
+
+**step : 3 kubectl apply it with new changed in deployment YAML file with changed configmap name so that new replicasets will be created to pick new change**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149617627-3dc1d9eb-7a3c-4c0f-8e29-132689a0e19b.png)
+
+
+**step 4: you could see new version of deployment is created as shown below in the form replica set.**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149617658-c04bb349-9f90-4231-8b4c-13b4aa6067e6.png)
+
+
+**Step 5: Enter into the new pod by using 'kubectl exec' command and check the environment variable inside whether it picked the new changed in the configmap**
+
+**New changes picked as shown in below image**
+
+![image](https://user-images.githubusercontent.com/80065996/149617822-e404c565-a37f-4423-af2b-bf5392366077.png)
+
+
 
 
