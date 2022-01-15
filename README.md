@@ -1418,6 +1418,109 @@ Next exec into the pod to see volume mount is created inside the pod (container)
 # change the config.YAML file like mentioned below (JSON syntax)
 
 
-![image](https://user-images.githubusercontent.com/80065996/149626728-580e3073-eeca-45b2-bc1f-310221841fe8.png)
+![image](https://user-images.githubusercontent.com/80065996/149628606-25e4794e-b4bd-47c9-9b58-490b2e276e92.png)
+
+
+Kubectl apply it,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149628728-c438b75a-a399-4a2d-abba-d330069a6a78.png)
+
+
+
+Kubectl apply it for deployment,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149628804-03b79554-f525-4911-a5f8-20f7d597f108.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149628823-52e08991-4017-4bff-91e4-0e94b381da08.png)
+
+
+exec into the pod (container) to check whether volume is created,
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149630712-6397a472-ab95-4f48-bc67-ad9cebbe8177.png)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149630705-247c3718-97cd-4031-a23e-485639cc1579.png)
+
+
+# Kuberneres secrets: Used to store sensistive information
+
+
+![image](https://user-images.githubusercontent.com/80065996/149631321-e033f6f2-b347-4995-ae67-ff4e241d8ce7.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149631302-db0fbb02-a553-4fa3-9d03-d163ae1b66c1.png)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149631338-929ecc1b-be6b-4478-a93e-9d65f2ed40aa.png)
+
+
+# note: If we apply this using kubectl it will throw an error
+
+
+![image](https://user-images.githubusercontent.com/80065996/149631578-f134478e-79ad-4307-b467-a47347fa6ecb.png)
+
+
+# error is beacuse we have to give base64 encoding. we dont have base63 encoder here
+
+
+![image](https://user-images.githubusercontent.com/80065996/149631732-9ac606a1-7930-440f-b5b4-f6a26f16b4d3.png)
+
+
+example of base 64,
+# base64 is intended for using binary value (0's and 1's). below is the base64 encoded version of a string. even string we will not pass to base64
+
+
+![image](https://user-images.githubusercontent.com/80065996/149631775-23dc9b53-79fd-4db9-afdb-876277fd752f.png)
+
+
+# converted the access key value into base64 version using below command as shown
+
+
+![image](https://user-images.githubusercontent.com/80065996/149631887-e86baa7c-d450-43a0-b5c6-68667ff715bb.png)
+
+
+# gave base 64 encoded version here in secret file # we gave to convert base64 version for both "access key" and "secret access key"
+
+
+![image](https://user-images.githubusercontent.com/80065996/149631956-34b85322-5184-4e5d-9def-66ef66f6a2c8.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149632054-7b164c4d-f7bc-4a0a-aa00-26c99376d004.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149632096-6e5d6128-2624-4861-8eb6-4b03d7b4872f.png)
+
+# how to convert values to base64 version: Even online base64 convertors are available
+
+# for numbers without quotes using pipe:
+
+
+![image](https://user-images.githubusercontent.com/80065996/149632150-535f9d72-dc34-459a-8ce9-e3f16529f301.png)
+
+
+# for string using quotes using pipe:
+
+
+![image](https://user-images.githubusercontent.com/80065996/149632174-72f5cc16-fa91-4730-a2d5-81d094697285.png)
+
+
+# We have another way to do this without base64 manual encoding. If we mention this as string kubernetes will automatically encode it for you
+# type mentioned here is "stringData" instead of "data" and values encoded in double quotes
+
+
+![image](https://user-images.githubusercontent.com/80065996/149632394-d012780d-994c-4896-bc95-6a82e0291a51.png)
+
+
+# This time it is created without we manually auto encode it
+
+
+![image](https://user-images.githubusercontent.com/80065996/149632448-4b847a12-ecfe-4675-aba6-028c3043add3.png)
 
 
