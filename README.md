@@ -1836,4 +1836,176 @@ kubectl apply it,
 ![image](https://user-images.githubusercontent.com/80065996/149656775-081756d5-2b35-4dca-9dc9-5f08ec5cd0f6.png)
 
 
+# How to protect the microservice running in the cluster from external threats. some of the microservice we dont want to expose to outside world.
+# Since we are using ingress controller to route the request from loadbalancer to corresponding service, we need to have a mechanism to make secure 
+# request to application running inside the pods.
+
+# using official documentation of ingress controller we can refer all the concepts.
+
+# from official ingress website, we are going to implement basic authentication to restrict request from browser to some extent of security
+
+https://kubernetes.github.io/ingress-nginx/examples/auth/basic/
+
+
+# in offical project please dont type any password in random website. you will always have password generator tool installed to generate the encypted password
+# using many encyption algorithms. for Personal use demo purpose we are going to use a online tool to generate username and encrypted password.
+
+https://www.askapache.com/online-tools/htpasswd-generator/
+
+
+![image](https://user-images.githubusercontent.com/80065996/149661791-c350ba19-9f98-4ab4-9163-e5de04fe1af7.png)
+
+
+# it gives username and password in all the algorithms. we can take it any one of the algorithms
+
+
+![image](https://user-images.githubusercontent.com/80065996/149661928-6399ca90-cfe1-4545-a8dd-6dae4555c367.png)
+
+
+# i am going to take bcrypt algorithm. Create a file named 'auth' without any extensions
+
+
+![image](https://user-images.githubusercontent.com/80065996/149662022-df97fdb3-1063-4efd-8f3d-bad7ca60f66c.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149662045-6cc09d72-0e7e-4abf-8494-1092bac7f521.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149662288-21fe7f7b-f421-47df-9cef-1fd23e0a81a6.png)
+
+
+generated my credentials
+
+
+![image](https://user-images.githubusercontent.com/80065996/149662391-b1b31c3d-fe34-434c-a66c-09796a8148b2.png)
+
+
+# created as kubernets object 'secret'. We created the same in previous lesson using YAML file. Now we created secret using command line
+
+
+![image](https://user-images.githubusercontent.com/80065996/149662489-ea3e8c24-78dd-4df4-a646-75b7b24ab53a.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149662502-33832902-0069-4568-955a-bf33926ae17e.png)
+
+
+# It shows encoded version of string. Even if someone sees this string and decode it they will get only hashed version of password. so not a problem
+
+
+![image](https://user-images.githubusercontent.com/80065996/149662576-0546e3f2-123c-46d0-baa1-0b3d7efa5ecc.png)
+
+
+# update the ingress.yaml file by adding annotations for authentication type, secret name and browser message in case of entering wrong credentials
+
+
+![image](https://user-images.githubusercontent.com/80065996/149663089-9663cfb5-a57f-4e6c-9012-bb5d159daf3e.png)
+
+
+# kubectl apply it ,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149663137-66fdfd9b-46ab-4b57-9e75-0921b2bebd6f.png)
+
+
+# created deployment and service of webapp and queue,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149663183-db7a1d4e-1e4e-448b-8923-b3ef53ec3409.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149663214-4856b4ea-8536-4a05-bfdc-aadb673b4b5a.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149663219-2dfefd87-b254-4491-b831-ea73de1fdcdf.png)
+
+
+# Result:
+
+# Now it will ask for username and password for hostnames as mentioned below
+
+
+![image](https://user-images.githubusercontent.com/80065996/149663307-6219981a-cbee-48a1-a08f-7971c11be9eb.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149663348-d4ac08c4-f302-4026-9d69-078a6f63c7fb.png)
+
+
+# basic authentication we should not use alone. we have to always use it with HTTPS encyrption using certificates.
+# if we are creating any application for our internal own staff then we can use this basic authentication is enough.
+
+# note: now with our YAML, the basic encryption applicable to all the services inside the cluster even for webapp. But it should not the case, we have to 
+# apply basic encryption to only queue not to the webapp(specific services)
+
+# we are going to create 2 ingress.YAML files. one of the file is for webapp without annotation and other file is for queue with annotations
+
+# copy ingress.yaml to another file ingress_secure.yaml
+
+
+![image](https://user-images.githubusercontent.com/80065996/149663926-c28c270d-9849-4472-9e83-bc955d29ca44.png)
+
+
+# ingress.Yaml as below without authentication for webapp since its a frontend service if we keep authentication frontend users will be affected,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664024-6ce41afe-cd59-4654-8364-c84c89f616ed.png)
+
+
+# ingress_secure.Yaml file with authentication annotation details for queue service. dont forgoet to change the name of ingress controller 
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664370-1e9683e9-df79-4740-9d48-612ab71d7c86.png)
+
+
+# what we are having now as part of ingress router
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664426-d1152f98-8dc9-4646-802d-c060b8ffc91f.png)
+
+
+# kubectl apply the new 2 ingress.yaml and ingress_secret.yaml files
+before that deleting the existing ingress router
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664519-4cdc02fb-a0de-41d7-a317-d20d9db6cef1.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664553-7c6dc5d2-f838-4d4f-937a-a6ec7fc09b93.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664560-6b125bd3-94f2-428b-9521-ad5bc5a3ae57.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664574-7cc52ebb-e4ad-4a46-b721-d79c41c21a55.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664597-339cfc9c-74e0-4295-928c-fc37e8ac4ee0.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664634-79fa8af6-98fb-4e2c-914a-fae1c064c759.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664650-cb10bb67-9bca-40f4-a068-fc1b1cc8a180.png)
+
+
+
+# result : now there is no authentication requests from webapp frontend as seen below,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664702-32113672-e85b-49df-8d54-287cd37f7c1c.png)
+
+
+# result: authentication is asking for active mq as shown below
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664747-9b1a9ca9-f4f9-466a-a900-046754c8ac2a.png)
+
+
+# notes : Avoiding confusioon here. We are not creating 2 ingress routers. we just created 2 different routing mechanisms. that it
+
+
+# things need to explore on our own. Like gorilla mux we can use regular expression and different pattern for base url in this YAML file as mentioned below
+
+
+![image](https://user-images.githubusercontent.com/80065996/149664910-22610d2b-72e7-48a2-a87a-3222cd12ed80.png)
+
 
