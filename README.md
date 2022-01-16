@@ -1523,4 +1523,317 @@ example of base 64,
 
 ![image](https://user-images.githubusercontent.com/80065996/149632448-4b847a12-ecfe-4675-aba6-028c3043add3.png)
 
+# note: Secrets are not secure as we are expecting. Lets demonstrate that
+
+
+![image](https://user-images.githubusercontent.com/80065996/149651308-3102abd2-2134-41e1-a4f9-f51d83fc92a3.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149651318-7a9b3d4a-0a9c-425d-baa7-6b45d4a962e0.png)
+
+
+similar to any other kubernetes object, we can describe the secret,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149651370-3c916b7a-c91f-4c57-8e92-21bce0815d6f.png)
+
+
+use the command to generate YAML file,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149651468-66a9b944-c2fd-4518-84ed-14db8e99a9f7.png)
+
+
+Here we got the details of secret key and access key with base64 encoded version. 
+
+# note: Encoding is not encyption. this is base64 encoded but not encrypted. so this secret can easily be decoded and we can see the value
+
+lets see how we can decode this value and see the contents,
+
+"base64 -d" and pipe is used to decrypt the value and see it
+
+
+![image](https://user-images.githubusercontent.com/80065996/149651627-d3f2fb30-3b45-4a45-9ff9-beac437746fe.png)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149651646-14fe7f48-f7ae-4a0d-8941-d236ef051e4e.png)
+
+
+**With this we can say secrets are not more a secret**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149651942-3eaffead-9cde-4f32-bee7-a73f7a387c46.png)
+
+
+# note: Kubernetes admins will use Role based access control mechanisms to not give access to people for secrets. they will give access only to configmaps
+# Configmap := commonly used values in multiple places of kubernetes will be put in a file and references across the all pods
+# Secret := used to store credentials. Eventhough not very secure, it will be encoded with base64 version and can see only encoded value when we use
+# command to create yaml from kubectl is used.
+
+
+![image](https://user-images.githubusercontent.com/80065996/149652000-07122159-ed4d-44bc-bde3-da6f0d7eb924.png)
+
+
+# Ingress controller:
+=====================
+
+The more standard way of accessing applications running inside the pod is through nodeport created as part of services created in minikube
+and loadbalancer as part of aws.
+
+
+![image](https://user-images.githubusercontent.com/80065996/149652153-6b229183-ffb4-4407-9ed8-97c16b272ce1.png)
+
+
+# Problem:
+===========
+# for every application you want to access from outside (browser), you need a loadbalancer in the cloud. Load balancer is very costly. it costs around $30
+# month for a single load balancer. even for our small practise project, we need loadbalancer for "active MQ", "webapp", "kibana frontend","grafana frontend". 
+# for a professional project, it will be more and cost incurred also very huge. also. not load balancer will have different DNS names, we have configure our DNS also
+# accordingly for each loadbalancer we are using.
+
+
+![image](https://user-images.githubusercontent.com/80065996/149652487-9564bdac-27da-440b-8465-06a394f62bd5.png)
+
+
+
+# solution:
+===========
+# We have concept called ingress controller.
+
+
+![image](https://user-images.githubusercontent.com/80065996/149652489-e0f7ae6a-c8ae-47c8-b91e-133e83d59842.png)
+
+
+# solution is we can have only one load balancer now. that load balancer will listen to browser(outside requests), Ingress controller will be introduced
+# between loadbalancer and services running inside of the cluster. We will not write this service on our own, we will get the implementation from 
+# kubernetes itself. Once common impelementation is ingress controller with nginx server inside of it. With this architecure we can avoid using multiple
+# loadbalancers to server the applications running in kubernetes cluster
+
+
+# Demonstrations in minikube
+# ingress controller is the addon in minikube. enabiling it
+
+
+![image](https://user-images.githubusercontent.com/80065996/149652837-a0449e72-720e-4cd0-b67e-d203fe8d5d3f.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149652848-eb4fe761-2fe2-4b68-bc41-3eab6bdf5247.png)
+
+
+# Ingress pods are created under ingress-nginx namespace (new namespace). Once addon is enabled, you could see corresponding pods are created
+# and corresponding services are created for load balancing
+
+
+![image](https://user-images.githubusercontent.com/80065996/149653067-c959a07f-0b55-4764-a215-b43ed8bdfaf1.png)
+
+
+# go to google chrome and give the port for ingress after finding minikube ip. Even if we didnt mention any port we found for ingress, call from browser is
+# happening to ingress router
+
+
+![image](https://user-images.githubusercontent.com/80065996/149653428-890bf3fd-6079-4bb0-9445-b044ebf4dc02.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149653393-406d9afe-4215-4c43-a0a1-bf42c883e897.png)
+
+
+**How it is happening?**. refer below diagram,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149653451-0542cbd4-7d70-45bd-add8-a88d25fafa94.png)
+
+
+# ingress controller is created outside of minikube cluster and passing all the requests from browser into temporary service created by default
+# by ingress controller called http backend. Since nothing is there to serve for HTTP bakend it is showing 404 not found. so we need to set routes
+
+# Now we have to write YAML file to create new route other than default route to HTTP backend
+
+# Problem with minikube : We cannot have dns service to use domain names. So we are going to use some tricks to mock that for our testing
+
+# for windows := open 'cmd' as administrator. go to the path as mentioned in below image to find the host file
+
+
+![image](https://user-images.githubusercontent.com/80065996/149654094-54a6e50d-75a0-4c0d-ad12-b98297d2e7cd.png)
+
+
+**open the host file using notepad:**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149654110-5ede1eeb-46ae-4fb5-b9df-e38f8a9f08c7.png)
+
+
+**this file has ipaddress with hostname mapping:**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149654166-35a95cfc-cdea-48f2-bc8e-e8b6692967fd.png)
+
+
+**take ipaddress using minikube ip**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149654202-8e5ee20b-5b57-487d-b1de-9d3dedeb5149.png)
+
+
+in the hosts file mention this notepad and also mention the corresponding hostname, (we can use real hostname as well - just for fun)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149654340-b2598abc-c2b0-4525-8d40-7e13eb0e312d.png)
+
+
+go to browser and type the hostname,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149654356-b1535f8f-17d9-447f-94e8-c4666c3ff1c2.png)
+
+
+# Template of the ingress router YAML file:
+# we can mention the details of the each domain and we can mention as many domain as we want. for practise purpose, we are going to use only 1 domain for our purpose
+
+
+![image](https://user-images.githubusercontent.com/80065996/149654446-1d8bb29b-fc6c-4ffb-a4fb-66de1c25a50e.png)
+
+
+**We have to give name of rule we are mentioning for each domain. (metadata field higlighted below)**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149654660-c4d5adae-0eb1-4a8d-b2a9-0e94fafd844e.png)
+
+
+Thats it ingress router is ready,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149654682-9f9358ee-e30c-4680-aec2-71c212e6e63e.png)
+
+
+**meaning of this is if we get request for fleetmansundar.com from outside(browser), loadbalancer will pass the request to  ingress which in turn has to route the ****request to service called "fleetman-webapp" which pass the request to the application running inside the pod which listens to port 80**
+**in "path" field as of it is mentioned as 'root' with empty slash(/). we can mention the different path values as well**
+
+
+**Note: You may get error for ingress here like below. API version keeps changing time to time. Just check the latest API version and use it**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655010-5c814862-3845-45b8-8fec-9fc88f8e4f82.png)
+
+
+**Changed the API version,**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655031-5970afad-5b00-47b6-bcff-e59c7f03902f.png)
+
+
+If we do kubectl apply now, we will get error, because for this APi version we ned to use 'path type' as mentioned below,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655161-daf13078-1bf7-4409-9f3f-049f8013bbd0.png)
+
+
+If we do kubectl apply now, we will get error, because for this APi version we ned to alter service details slighyly as mentioned below,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655254-f9d5ffad-1bd7-48a8-9356-6e9a020749bc.png)
+
+
+now kubectl apply it,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655284-8b08b972-79fc-4df4-bf19-f00b61906ae4.png)
+
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655371-dda7914b-a39b-43f7-813b-d8aad76b180b.png)
+
+
+now outing is set up properly, now deploy the webapp and its service,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655544-97c45d3a-bc45-4999-a8af-234d62f5f521.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655557-371f6d23-095e-4af9-b2f2-8d6d18d9dfb1.png)
+
+
+kubectl apply it,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655574-cf23ec89-29f6-46db-b473-9500f955fe99.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655690-27ef52e2-b6ee-43d4-988b-e0ccf3a0b103.png)
+
+
+now all are up and running
+
+1) We enabled the ingress add on in minikube
+2) We edited the hosts file to map the minikube ip with hostnames we want 
+3) by default ingress will listen to minikube ip adrress and forwards the requests from browser to default http backend nginx page. 
+4) To change the default route we have to create YAML and defines the paths
+5) we created a Yaml file and created and ingress routing definition of hostname we setup in hosts file
+6) so if a requests coming from browser to load balancer, load balancer it turns forwards the requests to ingress router
+7) in ingress since we mentioned the hostname and path and its corresponding service, requests will be forwarded to the servive mentioned in the YAML file
+
+
+**working result:**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149655897-ba3d99a1-a1cc-4fd6-ba5c-184079add169.png)
+
+
+# Note: till now, we used this to serve only single service,Now going to configure this to forward to multiple services,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656114-e2ec6a5f-9e29-4674-9bb5-e0d2706f0c01.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656181-52efb827-53bb-4423-b5e9-bda1bab2aa5e.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656210-7724f191-a5c2-4c4a-991b-5ca7c1a45ef5.png)
+
+
+kubectl apply it to create the deployment and service for the queue
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656266-4a5a937f-f90b-48f8-b11d-6e9a53350188.png)
+
+
+**Now we have 2 deployment (1 webapp, 2 queue) and 2 services (queue-1 - fleetman-webapp to server webapp and queue-2 fleetman-queue ro serve queue)**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656378-1da1deb2-37b3-4af7-99ed-0b21b8a657a6.png)
+
+
+Alter the host file to add the hostname,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656400-c0b76e6d-bd53-4a97-83b7-da26b99dd316.png)
+
+
+Added the new host block in ingress.yaml file and give corresponding service name "fleetman-queue"
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656688-9fe7db93-ccae-4e62-92b3-2d3842a785b3.png)
+
+
+
+
+kubectl apply it,
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656558-5e32375b-61db-4bd5-b006-95f6a583ed5e.png)
+
+
+**now browser's requests forwared to appropriate service based on routes we mentioned in ingres.yaml file**
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656715-990b1fb2-573e-49a4-b799-be5d5caab93c.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656735-42cec943-07f8-4b18-ab95-38433ced6acf.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/149656775-081756d5-2b35-4dca-9dc9-5f08ec5cd0f6.png)
+
+
 
