@@ -2357,4 +2357,6 @@ https://crontab.guru/#5_4_5_2_1
 # if a node is crashed then the pod created by daemon set also will be destroyed automatically
 
 
+# example of daemon set is 'fluentd' in ELK stack which is responsible for collecting logs from all the pods which are running in all the nodes.
+
 
