@@ -2150,4 +2150,42 @@ kubectl apply it,
 
 
 
+# create a new file called jobs.yaml 
+
+
+![image](https://user-images.githubusercontent.com/80065996/151507865-2311259c-25f1-4e78-8da1-b11cbc069a5c.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151509197-3cba8ba2-d167-4d68-be70-9625474a7e56.png)
+
+
+# kubectl apply it,
+
+
+![image](https://user-images.githubusercontent.com/80065996/151509241-703fd458-065c-4ea5-954b-a05915967de1.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151509321-c0c74f0e-9d12-419a-8b9b-83392b2acefb.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151509837-6ed6439a-55dd-49c8-8404-cf56f25ec201.png)
+
+
+# we can see status of the pod created by the 'batch job' object was in 'container creating' status and then changed to 'completed' status.
+
+
+**Check the object job created using below command,**
+
+
+![image](https://user-images.githubusercontent.com/80065996/151509981-ff36fc49-966f-432f-88ab-935ee96684c2.png)
+
+
+# describe the object and you can see the details.
+
+
+![image](https://user-images.githubusercontent.com/80065996/151510106-0f1e0f4e-5f8b-45fc-b6f6-0d1c30da1ab8.png)
+
+
+
+
 
