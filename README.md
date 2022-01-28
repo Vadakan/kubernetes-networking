@@ -2360,3 +2360,100 @@ https://crontab.guru/#5_4_5_2_1
 # example of daemon set is 'fluentd' in ELK stack which is responsible for collecting logs from all the pods which are running in all the nodes.
 
 
+# STATETFUL SET 
+
+
+![image](https://user-images.githubusercontent.com/80065996/151561415-3f8294c5-1f80-4d6d-9728-e637a0661e52.png)
+
+
+# Stateful set is not persistent. Persistent volume is something we could use to avoid losing of data in case of pod or node failure. We will store all the data 
+# from database pod in the node which cluster is running or EBS in case of cloud. We have to always take backup of EBS to avoid any data loss in case of node failure
+
+
+![image](https://user-images.githubusercontent.com/80065996/151563813-c209ef7b-ed19-4354-958e-cf2838fba2b1.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151564116-07abcd02-4390-4aeb-b853-40f90f9b9fb7.png)
+
+
+# above two diagrams is showing how webapp microservice is interacting with API gatwway microservice. It will communicate via service created for APi gateway. Service
+# will use round robin technique to route the request to underlying pods. We can change the algorithm of round robin for load balancing. But really we should not care
+# how load balance is happening. we can take lite on this.
+
+
+# Requirement: We always treat pods as cattle. we will not really worry about pod being killed. we can always create a new one.
+# but how to handle when we have requirement to treat pod as pets rather than cattle. We have to use 'stateful sets'
+
+
+![image](https://user-images.githubusercontent.com/80065996/151572342-5064cb41-d2fe-4962-8cee-d1414cd274aa.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151574052-8200ec80-fd9e-42fd-b3fd-c00bf538179e.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151574441-6b54c4db-83cc-49de-b426-65c01477b90d.png)
+
+
+# Requirement for stateful set:
+# 1) we want to provide names we wanted to pods we are creating instead of random generated names by default from kubernetes cluster
+# 2) for some reason, the client (webapp) needs to get communicated with pod with thier names instead of service configured for the pods.
+# 3) There are multiple replicas of the pod which is having same service running inside of it and we want all the pod to be treated as pets rather than cattle
+# 4) also the pods in the stateful set will start up by sequence (1,2, and 3 and so on)
+# 5) if above requirements are needed, then we have to use stateful set
+
+
+![image](https://user-images.githubusercontent.com/80065996/151577396-c1fa59be-7afc-44c1-bf2d-d5ff16350f5c.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151578124-01f6243f-1d26-4957-b1d4-4ab980f0cf87.png)
+
+
+# petsets in old version of kubernetes is called now as 'stateful sets'
+
+
+![image](https://user-images.githubusercontent.com/80065996/151578244-ca577b5b-6f9f-43ae-8f9a-eade1fc9658c.png)
+
+
+# REAL TIME USE CASE FOR 'STATEFUL SETS' - DATABASE REPLICATION
+
+
+![image](https://user-images.githubusercontent.com/80065996/151579594-80c619e1-ed5b-4ab9-bf1d-6deb44dd2cd1.png)
+
+
+# below diagram shows how we use database and communication with database from other microservice with only 1 replica of a database in traditional way
+
+
+![image](https://user-images.githubusercontent.com/80065996/151579788-e8f4f5c6-aeb0-4ea9-9b51-e5cab280fed3.png)
+
+
+# Databases cannot be replicated simply by mentioned replicas in the deployment YAML file we are creating. It does not work that way
+# either take MYSQL or mongo DB or anyother database, we cannot simply create multiple replicas. database used specific mechanisms to store data consistently
+# if we simply replicate the database PODS by using deploymen YAML by altering replicas value, it will create split memeory issue.
+# for example, 
+
+
+![image](https://user-images.githubusercontent.com/80065996/151580950-7a29801c-79ee-44fc-b628-042c5f9a6a9a.png)
+
+
+# in the above diagram, we have multiple instance of mongo DB pods, the problem is each and every pods are having independent databases and it is not 
+# communicating with each other. so every pods have different database storage and there is chance that data might be duplicated and data lose in case of one pods lost.
+# also split memory issue also happen.
+
+
+# Example :=  how to do proper database replication - MONGO DB replication
+
+
+![image](https://user-images.githubusercontent.com/80065996/151581733-356d2a36-e01a-408b-8d88-90f752b1be13.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151581991-5ce4292a-45e4-4b75-8a8f-ae91fa403735.png)
+
+
+# mongoDB replication algorithm := if we have 3 replicas of mongo pods, one of the mongo pod will be elected as 'primary' by mongo server and other two mongo pods
+# will become secondary. client whoever is calling mongodDB to store the data has to call the primary mongo pod so that data inserted or updated will be copied to 
+# other 2 seconday pods as well.
+# each mongo DB has the URL which can be used to call it and store the data. so clients will call primary DB URL to perform database operations
+
+
+# question ? how the client knows among all the replications that primary pod is this one? it is unique to particualr database.
+# for mongo we will pass URL from the coding language with comma separated values(server-1(pod-1),server-2(pod-2),server-3(pod-3))
