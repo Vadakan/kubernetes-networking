@@ -2186,6 +2186,175 @@ kubectl apply it,
 ![image](https://user-images.githubusercontent.com/80065996/151510106-0f1e0f4e-5f8b-45fc-b6f6-0d1c30da1ab8.png)
 
 
+![image](https://user-images.githubusercontent.com/80065996/151531491-29f68814-bf13-46c9-85bc-df7a2661e0a9.png)
+
+
+https://crontab.guru/#5_4_5_2_1
+
+
+# use this link and put your values accrodingly to check when this 'crontab' runs.
+
+
+# create a new file 'cronjob.yaml'
+
+
+![image](https://user-images.githubusercontent.com/80065996/151535563-e7caf92d-b24b-4751-8d14-edab39d0a7e8.png)
+
+
+# delete the previously created job. (we need to manually remove the job in 'completed' status in kubernetes cluster)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151533329-0303fa31-3b37-4033-967a-73db230ac65b.png)
+
+
+# kubectl apply the file 'cronjob.yaml' 
+
+
+![image](https://user-images.githubusercontent.com/80065996/151535643-c91abc71-8439-4529-be60-46e8c4af3624.png)
+
+
+# you can notice now, new kubernetes object 'cronjob' is created as shown below. since we mentioned schedule as '* * * * *'  for every minute new pod is created 
+# which is running our container from the image
+
+
+![image](https://user-images.githubusercontent.com/80065996/151536255-b726a1f9-65cc-44f2-9214-755f17a1c685.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151536574-25e1856c-c3d1-480d-8761-5d91ba47b8df.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151536596-6bd6a47f-0184-4fa4-b0b5-8307e13898d9.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151536629-d6b41c05-d18f-4210-ac4f-f56f594a7b79.png)
+
+
+# Problem: we have to delete manually on all the pods created by the cronjob for evey minute to execute our report microservice.
+
+
+![image](https://user-images.githubusercontent.com/80065996/151536971-f8715ae1-6f46-49ef-b5db-6c23a9f79245.png)
+
+
+# Conclusion: When we provide cron job, depends on the time schedule we have given, pods will be fired up and run the container inside of it. 
+# for example we have a report job which needs to get run on every friday at 5 pm in evening, we can schedule cron job accordingly so that at that particular time
+# pods will be fired and can execute our report microservice.
+# how to make sure our report job run to completition? what is that guarantee that in case of even any failure my report has to get completed ?
+# solution: we have a backup policy parameter which we can mention the number of times our pods needs to get restarted in case of any failures.
+# below highlighted parameter 'backoffpolicy' we have mentioned the value '2' which means our pod can restart two times in case of failure.
+# syntax of YAML file for the cronjob := cronjob definition --> job definition --> pod definition --> restart policy --> backoff policy
+
+
+![image](https://user-images.githubusercontent.com/80065996/151538134-1a26c0e8-c905-4539-bb3d-785c806869de.png)
+
+
+# demonstataion of backoff policy:
+# we have YAML file for job definition
+
+
+![image](https://user-images.githubusercontent.com/80065996/151540138-0c3326fe-6a46-4506-b753-19fd57f0e35b.png)
+
+
+# kubectl apply it,
+
+
+![image](https://user-images.githubusercontent.com/80065996/151544014-04c89120-2c38-4969-905a-fefe63b2cf2e.png)
+
+
+# opening new window and killing the container manually to simulate the failure scenario
+# below highlighted container is ours
+
+
+![image](https://user-images.githubusercontent.com/80065996/151544184-ed70bd79-2a22-4469-8f02-c4e281f63444.png)
+
+
+# killing it manually
+
+
+![image](https://user-images.githubusercontent.com/80065996/151544240-8add2e13-a24a-4c0b-9ac5-496f04b38fc1.png)
+
+
+# the pod showing error after killing the container
+
+
+![image](https://user-images.githubusercontent.com/80065996/151544323-d6d737fc-5ecf-4d3d-a556-7a9077e7abd8.png)
+
+
+# another pod started to compensate the failure. since we have provided backoff policy value as 2, we can failure limit upto 2 times. after that our pod will not re-create
+
+# killing the second pod as well from another window
+
+
+![image](https://user-images.githubusercontent.com/80065996/151544726-29487241-310f-4c64-8be2-417080d49b01.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151544758-c96592d3-a7bd-4b24-be77-af5d4a31a0f9.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151545099-d485dfd9-e409-464b-a2d0-bb623269a5a3.png)
+
+
+# now another pod will start to compensate the second kill.  again we are going to kill for third time. 
+
+
+![image](https://user-images.githubusercontent.com/80065996/151545200-885f7ea5-0990-4f87-b048-d21212bdf70e.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151545256-ee41195f-71de-421c-bbaf-3cfd24f16712.png)
+
+
+# now describe the job we created, it will show clearly that backoff limit is exceeded,
+
+
+![image](https://user-images.githubusercontent.com/80065996/151545362-9061245f-e04c-4f51-a7f9-c1bfc6032e91.png)
+
+
+# once done manaually delete the job we created,
+
+
+![image](https://user-images.githubusercontent.com/80065996/151545458-4e2105f8-c633-4769-9c8a-61101fc5d1ed.png)
+
+
+# everything cleaned as shown below
+
+
+![image](https://user-images.githubusercontent.com/80065996/151545495-7b93528a-4674-4880-86b0-14cceb47e7f7.png)
+
+
+
+# how to delete the cron job object created as part of kubernetes cluster
+
+
+![image](https://user-images.githubusercontent.com/80065996/151535032-a5611451-c6d4-4a3d-aa3f-0377faee59f6.png)
+
+
+
+# DAEMON SETS:
+# ===============
+# if we have kubernetes cluster which has 10 nodes. Deamon set we are configuring will make the pod runs on every node of the cluster. That is the main
+# functionality of daemon set.
+
+
+# Yaml file will be same as that of 'Deployment' yaml file. only 2 changes we have to make to make the YAML file for 'Daemon set'
+
+1) **change the name of the YAML to 'DaemonSet'**
+2) **We should not mention the replica set . Because we cannot be really sure on the number of replicas. Replicas are purely depend on the number of nodes**
+   **available in the kubernetes cluster**
+   
+   
+   ![image](https://user-images.githubusercontent.com/80065996/151547558-ec6af462-b360-4926-9600-28471dd6ef9d.png)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/151547761-6bed0ebe-a6b8-48dd-884f-ebc0a46a1f6a.png)
+
+
+# since we have only one node in the kubernetes cluster, one pod is created as shown in the result
+
+
+![image](https://user-images.githubusercontent.com/80065996/151548845-9a004482-1289-417a-bc71-d3114c57165f.png)
+
+
+# if a node is crashed then the pod created by daemon set also will be destroyed automatically
 
 
 
