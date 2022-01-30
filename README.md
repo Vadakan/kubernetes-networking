@@ -2457,3 +2457,59 @@ https://crontab.guru/#5_4_5_2_1
 
 # question ? how the client knows among all the replications that primary pod is this one? it is unique to particualr database.
 # for mongo we will pass URL from the coding language with comma separated values(server-1(pod-1),server-2(pod-2),server-3(pod-3))
+
+
+# what will happen if one of the mongo POD gets crashed among the total 3 pods replicas. In this case, election will happen and among the remaining 2 available pods 1 pod
+# will become primary pod and other pod will become secondary.
+
+
+![image](https://user-images.githubusercontent.com/80065996/151689558-66058c68-7944-4afc-b331-063e1986161f.png)
+
+
+# client pod (position tracker will communicate with other replicas of mongo pods via headless service.(service discovery). 
+# URL will be  in the format:  "service name://pod-name.service name"
+# the diagram above shows how the communicaton happens between two different microserivce using headless service.
+# the diagram shows since we used primary pod name in the URL, it will call the primary pod and do the database operations
+
+
+![image](https://user-images.githubusercontent.com/80065996/151689808-6a50e9b2-94c8-46c7-9414-e9b02380756c.png)
+
+
+# In the previous diagram, we passed only the name of primary pod so call from other microservie will call primary pod, if that pod fails we have a problem since we didnt
+# pass the other two pod names so that if primary pod fails, other two pod will perform election process and choose 1 as primary pod and other as secondary pod
+
+
+# Demonstration of stateful set:
+# it is always difficult to manage database pods inside the cluster. because we need to think about backups, persistent data because dealing with database always 
+# taking backups.
+# instead of pods in the cluster for database, we can use hosted servers in cloud providers, like in AWS we can use hosted database servers, with few simple clicks,
+# we can get the URL of the database so that we can use to call from other microservice
+
+
+# we have a course file called mongo-replication.yaml, just apply it 
+
+
+![image](https://user-images.githubusercontent.com/80065996/151691094-29382151-a4d2-40db-9458-c51714129fe1.png)
+
+
+# even the course author didnt write this on his own. he took this from helm repo,
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/151691508-5a416a0b-59b0-4d23-b398-f634389bc640.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151691592-578ca1ce-2e14-42aa-b508-21c3e697535f.png)
+
+
+
+![image](https://user-images.githubusercontent.com/80065996/151691676-7babcffe-698c-4436-b865-fce809bae250.png)
+
+
+# below highlighted stateful set with replicas-3 created 3 pods with proper names in sequence instead of random names.
+
+
+![image](https://user-images.githubusercontent.com/80065996/151691732-da11dcbc-fdae-4972-bf5b-b50b1bedd3a8.png)
+
+
+![image](https://user-images.githubusercontent.com/80065996/151691747-3da3b026-558a-4428-a2a6-e79dfa249a53.png)
